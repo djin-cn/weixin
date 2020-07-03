@@ -1,14 +1,14 @@
 /**
  * 
  */
-package me.djin.weixin.pojo.basesns;
+package me.djin.weixin.pojo.sns;
 
-import me.djin.weixin.pojo.BaseModel;
+import me.djin.weixin.pojo.SnsBaseModel;
 
 /**
  * @author djin
  */
-public class GetUserAccessTokenResponse extends BaseModel {
+public class SnsAccessTokenResponse extends SnsBaseModel {
 	private String access_token;
 	private Integer expires_in;
 	private String refresh_token;
@@ -53,5 +53,12 @@ public class GetUserAccessTokenResponse extends BaseModel {
 
 	public void setScope(String scope) {
 		this.scope = scope;
+	}
+
+	@Override
+	public String toString() {
+		return "GetUserAccessTokenResponse [access_token=" + access_token + ", expires_in=" + expires_in
+				+ ", refresh_token=" + refresh_token + ", openid=" + openid + ", scope=" + scope + "] "
+				+ super.toString();
 	}
 }

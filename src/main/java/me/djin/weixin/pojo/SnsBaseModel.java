@@ -6,7 +6,7 @@ package me.djin.weixin.pojo;
 /**
  * @author djin 所有微信返回值的基础对象
  */
-public class BaseModel {
+public class SnsBaseModel {
 	private Integer errcode;
 	private String errmsg;
 
@@ -46,5 +46,10 @@ public class BaseModel {
 	 */
 	public void setErrmsg(String errmsg) {
 		this.errmsg = errmsg;
+	}
+
+	@Override
+	public String toString() {
+		return "BaseModel [errcode=" + errcode + ", errmsg=" + errmsg + "] " + super.toString();
 	}
 }

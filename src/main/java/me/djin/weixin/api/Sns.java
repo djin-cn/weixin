@@ -5,15 +5,15 @@ package me.djin.weixin.api;
 
 import feign.Param;
 import feign.RequestLine;
-import me.djin.weixin.pojo.basesns.GetUserAccessTokenResponse;
-import me.djin.weixin.pojo.basesns.JsCode2SessionResponse;
+import me.djin.weixin.pojo.sns.SnsAccessTokenResponse;
+import me.djin.weixin.pojo.sns.SnsJsCode2SessionResponse;
 
 /**
  * @author djin 微信基础接口
  */
-public interface BaseSns {
+public interface Sns {
 	/**
-	 * 获取用户访问令牌
+	 * 获取用户访问令牌, 适用于网页登录场景
 	 * 
 	 * @param appid     appid,可登录微信公众号平台，在“开发”-“基本配置”-“开发者ID”获取
 	 * @param appsecret appsecret,可登录微信公众号平台，在“开发”-“基本配置”-“开发者密码”获取
@@ -23,11 +23,13 @@ public interface BaseSns {
 	 * @return
 	 */
 	@RequestLine("GET /sns/oauth2/access_token?appid={appid}&secret={secret}&code={code}&grant_type=authorization_code")
-	GetUserAccessTokenResponse getUserAccessToken(@Param("appid") String appid, @Param("secret") String appsecret,
+	SnsAccessTokenResponse accessToken(@Param("appid") String appid, @Param("secret") String appsecret,
 			@Param("code") String code);
 
 	/**
 	 * 登录凭证校验。通过 wx.login接口获得临时登录凭证 code后传到开发者服务器调用此接口完成登录流程.
+	 * 
+	 * 适用于小程序登录场景
 	 * 
 	 * @param appid     小程序 appId
 	 * @param appsecret 小程序 appSecret
@@ -35,6 +37,6 @@ public interface BaseSns {
 	 * @return
 	 */
 	@RequestLine("GET /sns/jscode2session?appid={appid}&secret={secret}&js_code={code}&grant_type=authorization_code")
-	JsCode2SessionResponse jsCode2Session(@Param("appid") String appid, @Param("secret") String appsecret,
+	SnsJsCode2SessionResponse jsCode2Session(@Param("appid") String appid, @Param("secret") String appsecret,
 			@Param("code") String code);
 }

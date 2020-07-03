@@ -1,7 +1,7 @@
 package me.djin.weixin;
 
-import me.djin.weixin.api.BaseSns;
-import me.djin.weixin.pojo.basesns.GetUserAccessTokenResponse;
+import me.djin.weixin.api.Sns;
+import me.djin.weixin.pojo.sns.SnsAccessTokenResponse;
 
 /**
  * Hello world!
@@ -17,8 +17,8 @@ public class App {
 	}
 
 	public static void testBaseSns_getUserAccessToken() {
-		BaseSns sns = ApiInstance.createBaseSns();
-		GetUserAccessTokenResponse response = sns.getUserAccessToken(APPID, APPSECRET,
+		Sns sns = ApiInstance.createBaseSns();
+		SnsAccessTokenResponse response = sns.accessToken(APPID, APPSECRET,
 				"081NZwU12sjUMU0wQTW12DleU12NZwUY");
 		System.out.println(response);
 	}

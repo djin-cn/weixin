@@ -1,14 +1,14 @@
 /**
  * 
  */
-package me.djin.weixin.pojo.basesns;
+package me.djin.weixin.pojo.sns;
 
-import me.djin.weixin.pojo.BaseModel;
+import me.djin.weixin.pojo.SnsBaseModel;
 
 /**
  * @author djin
  */
-public class JsCode2SessionResponse extends BaseModel {
+public class SnsJsCode2SessionResponse extends SnsBaseModel {
 	private String openid;
 	private String session_key;
 	private String unionid;
@@ -57,5 +57,11 @@ public class JsCode2SessionResponse extends BaseModel {
 	 */
 	public void setUnionid(String unionid) {
 		this.unionid = unionid;
+	}
+
+	@Override
+	public String toString() {
+		return "JsCode2SessionResponse [openid=" + openid + ", session_key=" + session_key + ", unionid=" + unionid
+				+ "] " + super.toString();
 	}
 }
