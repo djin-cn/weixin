@@ -3,12 +3,12 @@
  */
 package me.djin.weixin.pojo.sns;
 
-import me.djin.weixin.pojo.SnsBaseModel;
+import me.djin.weixin.pojo.BaseModel;
 
 /**
  * @author djin
  */
-public class SnsJsCode2SessionResponse extends SnsBaseModel {
+public class SnsJsCode2SessionResponse extends BaseModel {
 	private String openid;
 	private String session_key;
 	private String unionid;

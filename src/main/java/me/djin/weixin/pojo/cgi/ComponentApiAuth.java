@@ -5,6 +5,9 @@ package me.djin.weixin.pojo.cgi;
 
 import java.util.List;
 
+import me.djin.weixin.util.CollectionUtils;
+import me.djin.weixin.util.Constant;
+
 /**
  * 第三方授权信息
  * 
@@ -58,7 +61,7 @@ public class ComponentApiAuth {
 		/**
 		 * 授权给开发者的权限集列表
 		 */
-		private List<FunctionAuth> func_info;
+		private List<FunctionInfo> func_info;
 
 		/**
 		 * @return the authorizer_appid
@@ -119,94 +122,25 @@ public class ComponentApiAuth {
 		/**
 		 * @return the func_info
 		 */
-		public List<FunctionAuth> getFunc_info() {
+		public List<FunctionInfo> getFunc_info() {
 			return func_info;
 		}
 
 		/**
 		 * @param func_info the func_info to set
 		 */
-		public void setFunc_info(List<FunctionAuth> func_info) {
+		public void setFunc_info(List<FunctionInfo> func_info) {
 			this.func_info = func_info;
 		}
 
 		@Override
 		public String toString() {
-			StringBuilder sb = new StringBuilder();
-			if (func_info != null && !func_info.isEmpty()) {
-				sb.append("[");
-				for (FunctionAuth functionAuth : func_info) {
-					sb.append(functionAuth.getFuncscope_category().getId());
-					sb.append(",");
-				}
-				int length = sb.length();
-				sb.replace(length - 1, length, "]");
-			}
 			return "AuthorizationInfo [authorizer_appid=" + authorizer_appid + ", authorizer_access_token="
 					+ authorizer_access_token + ", expires_in=" + expires_in + ", authorizer_refresh_token="
-					+ authorizer_refresh_token + ", func_info=" + sb.toString() + "] " + super.toString();
+					+ authorizer_refresh_token + ", func_info="
+					+ CollectionUtils.toString(func_info, Constant.SEPARATOR) + "] " + super.toString();
 
 		}
 	}
 
-	public static class FunctionAuth {
-		/**
-		 * 权限集/权限域
-		 */
-		private FunctionScope funcscope_category;
-
-		/**
-		 * @return the funcscope_category
-		 */
-		public FunctionScope getFuncscope_category() {
-			return funcscope_category;
-		}
-
-		/**
-		 * @param funcscope_category the funcscope_category to set
-		 */
-		public void setFuncscope_category(FunctionScope funcscope_category) {
-			this.funcscope_category = funcscope_category;
-		}
-
-		@Override
-		public String toString() {
-			return "FunctionAuth [funcscope_category=" + funcscope_category + "] " + super.toString();
-		}
-	}
-
-	/**
-	 * 权限集
-	 * 
-	 * 具体可参考连接
-	 * {@link https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/api/func_info.html}
-	 * 
-	 * @author djin
-	 *
-	 */
-	public static class FunctionScope {
-		/**
-		 * 权限集ID/权限域ID
-		 */
-		private String id;
-
-		/**
-		 * @return the id
-		 */
-		public String getId() {
-			return id;
-		}
-
-		/**
-		 * @param id the id to set
-		 */
-		public void setId(String id) {
-			this.id = id;
-		}
-
-		@Override
-		public String toString() {
-			return "FunctionScope [id=" + id + "] " + super.toString();
-		}
-	}
 }

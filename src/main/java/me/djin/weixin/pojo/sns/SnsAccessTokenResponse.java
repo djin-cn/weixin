@@ -3,12 +3,12 @@
  */
 package me.djin.weixin.pojo.sns;
 
-import me.djin.weixin.pojo.SnsBaseModel;
+import me.djin.weixin.pojo.BaseModel;
 
 /**
  * @author djin
  */
-public class SnsAccessTokenResponse extends SnsBaseModel {
+public class SnsAccessTokenResponse extends BaseModel {
 	private String access_token;
 	private Integer expires_in;
 	private String refresh_token;

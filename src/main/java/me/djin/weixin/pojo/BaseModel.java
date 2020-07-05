@@ -6,7 +6,7 @@ package me.djin.weixin.pojo;
 /**
  * @author djin 所有微信返回值的基础对象
  */
-public class SnsBaseModel {
+public class BaseModel {
 	private Integer errcode;
 	private String errmsg;
 
