@@ -41,5 +41,13 @@
 			<artifactId>feign-okhttp</artifactId>
 			<version>8.18.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.12</version>
+			<optional>true</optional>
+		</dependency>
+
 	</dependencies>
 </project>

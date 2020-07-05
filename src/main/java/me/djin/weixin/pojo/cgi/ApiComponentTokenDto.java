@@ -64,4 +64,11 @@ public final class ApiComponentTokenDto {
 	public void setComponent_verify_ticket(String component_verify_ticket) {
 		this.component_verify_ticket = component_verify_ticket;
 	}
+
+	@Override
+	public String toString() {
+		return "ApiComponentTokenDto [component_appid=" + component_appid + ", component_appsecret="
+				+ component_appsecret + ", component_verify_ticket=" + component_verify_ticket + "] "
+				+ super.toString();
+	}
 }

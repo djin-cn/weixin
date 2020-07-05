@@ -45,4 +45,10 @@ public final class ComponentToken {
 	public void setExpires_in(Integer expires_in) {
 		this.expires_in = expires_in;
 	}
+
+	@Override
+	public String toString() {
+		return "ComponentToken [component_access_token=" + component_access_token + ", expires_in=" + expires_in + "] "
+				+ super.toString();
+	}
 }
