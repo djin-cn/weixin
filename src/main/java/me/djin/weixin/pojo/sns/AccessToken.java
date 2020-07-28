@@ -6,9 +6,11 @@ package me.djin.weixin.pojo.sns;
 import me.djin.weixin.pojo.BaseModel;
 
 /**
+ * 用户授权登录访问令牌, 适用于网页形式登录
+ * 
  * @author djin
  */
-public class SnsAccessTokenResponse extends BaseModel {
+public class AccessToken extends BaseModel {
 	private String access_token;
 	private Integer expires_in;
 	private String refresh_token;

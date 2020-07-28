@@ -8,7 +8,7 @@ import me.djin.weixin.pojo.BaseModel;
 /**
  * @author djin
  */
-public class SnsJsCode2SessionResponse extends BaseModel {
+public class SessionToken extends BaseModel {
 	private String openid;
 	private String session_key;
 	private String unionid;

@@ -10,15 +10,18 @@ import me.djin.weixin.pojo.cgi.ApiAuthorizerTokenDto;
 import me.djin.weixin.pojo.cgi.ApiComponentTokenDto;
 import me.djin.weixin.pojo.cgi.ApiCreatePreauthcodeDto;
 import me.djin.weixin.pojo.cgi.ApiGetAuthorizerInfoDto;
+import me.djin.weixin.pojo.cgi.ApiGetAuthorizerListDto;
 import me.djin.weixin.pojo.cgi.ApiGetAuthorizerOptionDto;
 import me.djin.weixin.pojo.cgi.ApiQueryAuthDto;
 import me.djin.weixin.pojo.cgi.ApiSetAuthorizerOptionDto;
 import me.djin.weixin.pojo.cgi.AuthorizerInfo;
 import me.djin.weixin.pojo.cgi.AuthorizerOptionInfo;
+import me.djin.weixin.pojo.cgi.AuthorizerSimpleInfo;
 import me.djin.weixin.pojo.cgi.ComponentApiAuth;
 import me.djin.weixin.pojo.cgi.ComponentAuthorizerToken;
 import me.djin.weixin.pojo.cgi.ComponentPreAuthCode;
 import me.djin.weixin.pojo.cgi.ComponentToken;
+import me.djin.weixin.pojo.cgi.Page;
 
 /**
  * 微信网关类接口
@@ -149,5 +152,17 @@ public interface Cgi {
 	BaseModel apiSetAuthorizerOption(@Param("component_access_token") String componentAccessToken,
 			ApiSetAuthorizerOptionDto dto);
 
-	// TODO: 拉取所有已授权的账号信息, 2个接收事件
+	/**
+	 * 拉取当前所有已授权的帐号基本信息
+	 * 
+	 * {@link https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/api/api_get_authorizer_list.html}
+	 * 
+	 * @param componentAccessToken 令牌
+	 *                             {@link Cgi#apiComponentToken(ApiComponentTokenDto)}
+	 * @param dto
+	 * @return
+	 */
+	@RequestLine("POST /cgi-bin/component/api_get_authorizer_list?component_access_token={component_access_token}")
+	Page<AuthorizerSimpleInfo> apiGetAuthorizerList(@Param("component_access_token") String componentAccessToken,
+			ApiGetAuthorizerListDto dto);
 }

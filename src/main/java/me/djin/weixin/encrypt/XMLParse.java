@@ -8,15 +8,25 @@
 
 package me.djin.weixin.encrypt;
 
+import java.io.IOException;
 import java.io.StringReader;
+import java.rmi.UnexpectedException;
+import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import me.djin.weixin.pojo.cgi.AuthorizeInfo;
+import me.djin.weixin.pojo.cgi.ComponentTicket;
+import me.djin.weixin.pojo.cgi.EventMessageModel;
+import me.djin.weixin.pojo.cgi.EventMessageModel.EventType;
 
 /**
  * XMLParse class
@@ -24,9 +34,68 @@ import org.xml.sax.InputSource;
  * 提供提取消息格式中的密文及生成回复消息格式的接口.
  */
 class XMLParse {
+	/**
+	 * 解析事件消息,包括但不限于验证票据事件/授权变更事件
+	 * 
+	 * @param plaintext 解密后的明文
+	 * @return
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	public static EventMessageModel parse2EventMessage(String plaintext)
+			throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilder db = buildDocumentBuilder();
+		StringReader sr = new StringReader(plaintext);
+		InputSource is = new InputSource(sr);
+		Document document = db.parse(is);
+		Element root = document.getDocumentElement();
+		NodeList appIdNodeList = root.getElementsByTagName(EventMessageModel.APPID_NODE);
+		NodeList createTimeNodelist = root.getElementsByTagName(EventMessageModel.CREATETIME_NODE);
+		NodeList infoTypeNodelist = root.getElementsByTagName(EventMessageModel.INFOTYPE_NODE);
+		String infoType = infoTypeNodelist.item(0).getTextContent();
+
+		// 验证票据事件消息
+		if (EventType.COMPONENT_VERIFY_TICKET.name().equalsIgnoreCase(infoType)) {
+			NodeList componentVerifyTicketNodelist = root
+					.getElementsByTagName(ComponentTicket.COMPONENTVERIFYTICKET_NODE);
+			ComponentTicket componentTicket = new ComponentTicket();
+			componentTicket.setAppId(appIdNodeList.item(0).getTextContent());
+			componentTicket.setCreateTime(new Date(Long.valueOf(createTimeNodelist.item(0).getTextContent())));
+			componentTicket.setInfoType(EventType.COMPONENT_VERIFY_TICKET);
+			componentTicket.setComponentVerifyTicket(componentVerifyTicketNodelist.item(0).getTextContent());
+			return componentTicket;
+		}
+
+		// 授权变更事件消息
+		NodeList authorizerAppIdNodeList = root.getElementsByTagName(AuthorizeInfo.AUTHORIZERAPPID_NODE);
+		NodeList authorizationCodeNodelist = root.getElementsByTagName(AuthorizeInfo.AUTHORIZATIONCODE_NODE);
+		NodeList authorizationCodeExpiredTimeNodelist = root
+				.getElementsByTagName(AuthorizeInfo.AUTHORIZATIONCODEEXPIREDTIME_NODE);
+		NodeList preAuthCodeNodelist = root.getElementsByTagName(AuthorizeInfo.PREAUTHCODE_NODE);
+		AuthorizeInfo authorizeInfo = new AuthorizeInfo();
+		authorizeInfo.setAppId(appIdNodeList.item(0).getTextContent());
+		authorizeInfo.setCreateTime(new Date(Long.valueOf(createTimeNodelist.item(0).getTextContent())));
+		authorizeInfo.setAuthorizationCode(authorizationCodeNodelist.item(0).getTextContent());
+		authorizeInfo.setAuthorizationCodeExpiredTime(
+				Long.valueOf(authorizationCodeExpiredTimeNodelist.item(0).getTextContent()));
+		authorizeInfo.setAuthorizerAppid(authorizerAppIdNodeList.item(0).getTextContent());
+		authorizeInfo.setPreAuthCode(preAuthCodeNodelist.item(0).getTextContent());
+		if (EventType.AUTHORIZED.name().equalsIgnoreCase(infoType)) {
+			authorizeInfo.setInfoType(EventType.AUTHORIZED);
+		} else if (EventType.UNAUTHORIZED.name().equalsIgnoreCase(infoType)) {
+			authorizeInfo.setInfoType(EventType.UNAUTHORIZED);
+		} else if (EventType.UPDATEAUTHORIZED.name().equalsIgnoreCase(infoType)) {
+			authorizeInfo.setInfoType(EventType.UPDATEAUTHORIZED);
+		} else {
+			throw new UnexpectedException(
+					"unexpected weixin infotype:" + infoType + ", please reference to EventType enum");
+		}
+		return authorizeInfo;
+	}
 
 	/**
-	 * 提取出xml数据包中的加密消息
+	 * 提取出xml数据包中的加密消息, 一般用于接收微信安全模式推送的XML消息, 包含两个元素:Encrypt,ToUserName;
 	 * 
 	 * @param xmltext 待提取的xml字符串
 	 * @return 提取出的加密消息字符串
@@ -35,14 +104,7 @@ class XMLParse {
 	public static Object[] extract(String xmltext) throws AesException {
 		Object[] result = new Object[3];
 		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-			dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-			dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-			dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			dbf.setXIncludeAware(false);
-			dbf.setExpandEntityReferences(false);
-			DocumentBuilder db = dbf.newDocumentBuilder();
+			DocumentBuilder db = buildDocumentBuilder();
 			StringReader sr = new StringReader(xmltext);
 			InputSource is = new InputSource(sr);
 			Document document = db.parse(is);
@@ -76,5 +138,23 @@ class XMLParse {
 				+ "<Nonce><![CDATA[%4$s]]></Nonce>\n" + "</xml>";
 		return String.format(format, encrypt, signature, timestamp, nonce);
 
+	}
+
+	/**
+	 * 生成DocumentBuilder实例
+	 * 
+	 * @return
+	 * @throws ParserConfigurationException
+	 */
+	private static DocumentBuilder buildDocumentBuilder() throws ParserConfigurationException {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+		dbf.setXIncludeAware(false);
+		dbf.setExpandEntityReferences(false);
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		return db;
 	}
 }

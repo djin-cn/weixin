@@ -3,7 +3,8 @@
  */
 package me.djin.weixin.pojo.cgi;
 
-import java.sql.Date;
+import me.djin.weixin.util.Constant;
+import me.djin.weixin.util.StringUtils;
 
 /**
  * 微信第三方ticket
@@ -15,65 +16,15 @@ import java.sql.Date;
  * @author djin
  *
  */
-public class ComponentTicket {
+public class ComponentTicket extends EventMessageModel {
 	/**
-	 * 第三方平台 appid
+	 * xml中ComponentVerifyTicket节点
 	 */
-	private String appId;
-	/**
-	 * 时间戳，单位：s
-	 */
-	private Date createTime;
-	/**
-	 * 固定为：component_verify_ticket
-	 */
-	private String infoType;
+	public static final String COMPONENTVERIFYTICKET_NODE = "ComponentVerifyTicket";
 	/**
 	 * Ticket 内容
 	 */
 	private String componentVerifyTicket;
-
-	/**
-	 * @return the appId
-	 */
-	public String getAppId() {
-		return appId;
-	}
-
-	/**
-	 * @param appId the appId to set
-	 */
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
-
-	/**
-	 * @return the createTime
-	 */
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	/**
-	 * @param createTime the createTime to set
-	 */
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	/**
-	 * @return the infoType
-	 */
-	public String getInfoType() {
-		return infoType;
-	}
-
-	/**
-	 * @param infoType the infoType to set
-	 */
-	public void setInfoType(String infoType) {
-		this.infoType = infoType;
-	}
 
 	/**
 	 * @return the componentVerifyTicket
@@ -91,7 +42,7 @@ public class ComponentTicket {
 
 	@Override
 	public String toString() {
-		return "ComponentTicket [appId=" + appId + ", createTime=" + createTime + ", infoType=" + infoType
-				+ ", componentVerifyTicket=" + componentVerifyTicket + "] " + super.toString();
+		return "ComponentTicket [componentVerifyTicket="
+				+ StringUtils.getMaskString(componentVerifyTicket, Constant.MASK_STRING) + "] " + super.toString();
 	}
 }
