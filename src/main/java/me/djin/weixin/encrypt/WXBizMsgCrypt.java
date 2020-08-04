@@ -49,7 +49,7 @@ public class WXBizMsgCrypt {
 	 * 构造函数
 	 * 
 	 * @param token          公众平台上，开发者设置的token
-	 * @param encodingAesKey 公众平台上，开发者设置的EncodingAESKey
+	 * @param encodingAesKey 公众平台上，开发者设置的EncodingAESKey或者用户登录后的SessionKey
 	 * @param appId          公众平台appid
 	 * 
 	 * @throws AesException 执行失败，请查看该异常的错误码和具体的错误信息
@@ -284,4 +284,35 @@ public class WXBizMsgCrypt {
 		return result;
 	}
 
+	/**
+	 * 解密未签名消息<br/>
+	 * 可用于解密手机号码等
+	 * 
+	 * @param encryptedData 加密的消息内容
+	 * @param iv            加密算法的初始向量
+	 * @return
+	 * @throws AesException
+	 */
+	public String decryptUnsignedMsg(String encryptedData, String iv) throws AesException {
+		byte[] original;
+		try {
+			// 设置解密模式为AES的CBC模式
+			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+			SecretKeySpec key_spec = new SecretKeySpec(aesKey, "AES");
+			IvParameterSpec ivParameterSpec = new IvParameterSpec(Base64.decodeBase64(iv));
+			cipher.init(Cipher.DECRYPT_MODE, key_spec, ivParameterSpec);
+
+			// 使用BASE64对密文进行解码
+			byte[] encrypted = Base64.decodeBase64(encryptedData);
+
+			// 解密
+			original = cipher.doFinal(encrypted);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AesException(AesException.DecryptAESError);
+		}
+
+		byte[] bytes = PKCS7Encoder.decode(original);
+		return new String(bytes, CHARSET);
+	}
 }
