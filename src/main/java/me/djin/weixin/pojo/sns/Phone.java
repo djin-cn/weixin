@@ -3,6 +3,9 @@
  */
 package me.djin.weixin.pojo.sns;
 
+import me.djin.weixin.util.Constant;
+import me.djin.weixin.util.StringUtils;
+
 /**
  * 手机号信息
  * 
@@ -67,7 +70,8 @@ public class Phone {
 
 	@Override
 	public String toString() {
-		return "Phone [phoneNumber=" + phoneNumber + ", purePhoneNumber=" + purePhoneNumber + ", countryCode="
-				+ countryCode + "] " + super.toString();
+		return "Phone [phoneNumber=" + StringUtils.getMaskString(phoneNumber, Constant.MASK_STRING)
+				+ ", purePhoneNumber=" + StringUtils.getMaskString(purePhoneNumber, Constant.MASK_STRING)
+				+ ", countryCode=" + countryCode + "] " + super.toString();
 	}
 }
