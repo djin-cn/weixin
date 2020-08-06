@@ -14,3 +14,54 @@ component接口一般为B类用户调用A的接口; authorizer表示B类用户�
 
 ## 注意事项
 1. 微信加解密用到了commons-codec, 微信官方提供的示例为1.9版本, 接口库用的1.12版本, 实际使用版本不要超过1.12, >1.12版本可能会提示IllegalArgumentException
+
+##maven引用使用方式
+1. 首先在gitlab或者github上搭建maven私库
+2. 然后在settings.xml或者pom.xml引入repository, 两种方式分别如下:  
+
+settings.xml
+
+```xml
+    <mirrors>
+        <mirror>
+            <id>aliyunmaven</id>
+            <mirrorOf>central</mirrorOf>
+            <name>阿里云公共仓库</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+        </mirror>
+    </mirrors>
+    <profiles>
+        <profile>
+            <id>private</id>
+            <repositories>
+                <repository>
+                    <id>gitlab</id>
+                    <url>http://{domain}/{repos}/raw/master/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>private</activeProfile>  
+    </activeProfiles>
+</settings>
+```
+
+pom.xml
+
+```xml
+    <repositories>
+        <repository>
+            <id>gitlab</id>
+            <name>gitlab</name>
+            <url>http://{domain}/{repos}/raw/master/</url>
+        </repository>
+    </repositories>
+```
