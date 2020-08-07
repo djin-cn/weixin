@@ -19,11 +19,11 @@ import me.djin.weixin.pojo.sns.Phone;
 import me.djin.weixin.util.Constant;
 
 /**
- * @author djin
+ * 微信请求处理工具类
  * 
- *         TODO:
+ * @author djin
  */
-public class WxRequestUtil {
+public class WxRequestProcess {
 	/**
 	 * 解密微信第三方平台事件消息,如:验证票据/授权变更推送<br/>
 	 * 注意:接收到请求后需要返回字符串success
@@ -37,29 +37,30 @@ public class WxRequestUtil {
 	 */
 	public static EventMessageModel decryptEventRequest(ServletRequest request, ComponentInfo componentInfo)
 			throws IOException, AesException, ParserConfigurationException, SAXException {
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptEventRequest",
+		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
 				"微信事件消息解析ing...");
 
 		String msgSignature = getMsgSignature(request);
 		String nonce = getNonce(request);
 		String timeStamp = getTimeStamp(request);
 		String postData = getPostData(request);
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptEventRequest",
+		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
 				"signature:" + msgSignature);
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptEventRequest",
+		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
 				"nonce:" + nonce);
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptEventRequest",
+		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
 				"timeStamp:" + timeStamp);
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptEventRequest",
+		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
 				"postData:" + postData);
 
 		WXBizMsgCrypt wxCrypt = new WXBizMsgCrypt(componentInfo.getToken(), componentInfo.getEncodingAESKey(),
 				componentInfo.getAppId());
 		String msgPlaintext = wxCrypt.decryptMsg(msgSignature, timeStamp, nonce, postData);
 		EventMessageModel model = XMLParse.parse2EventMessage(msgPlaintext);
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptEventRequest",
+		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
 				"eventMessage:" + model.toString());
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptEventRequest", "微信事件消息解析结束");
+		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
+				"微信事件消息解析结束");
 		return model;
 	}
 
@@ -79,22 +80,23 @@ public class WxRequestUtil {
 	 */
 	public static Phone decryptPhone(String sessionKey, String encryptData, String iv, String cloudId)
 			throws AesException {
-		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptPhone", "微信手机号码解析ing...:");
+		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptPhone", "微信手机号码解析ing...:");
 		if (cloudId != null) {
 			throw new UnsupportedOperationException("尚未实现通过微信开放平台云ID获取手机号");
 		}
-		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptPhone",
+		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptPhone",
 				"sessionKey:" + sessionKey);
-		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptPhone", "iv:" + iv);
-		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptPhone",
+		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptPhone", "iv:" + iv);
+		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptPhone",
 				"encryptData:" + encryptData);
 		WXBizMsgCrypt wxCrypt = new WXBizMsgCrypt("", sessionKey, "");
 		String decryptMsg = wxCrypt.decryptUnsignedMsg(encryptData, iv);
 		Gson gson = new Gson();
 		Phone phone = gson.fromJson(decryptMsg, Phone.class);
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptEventRequest",
+		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
 				phone.toString());
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestUtil.class.getName(), "decryptEventRequest", "微信手机号码解析结束");
+		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
+				"微信手机号码解析结束");
 		return null;
 	}
 
