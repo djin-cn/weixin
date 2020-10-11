@@ -1,7 +1,7 @@
 /**
  * 
  */
-package me.djin.weixin.encrypt;
+package me.djin.weixin;
 
 import java.io.IOException;
 
@@ -13,6 +13,9 @@ import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 
+import me.djin.weixin.encrypt.AesException;
+import me.djin.weixin.encrypt.WXBizMsgCrypt;
+import me.djin.weixin.encrypt.XMLParse;
 import me.djin.weixin.pojo.cgi.ComponentInfo;
 import me.djin.weixin.pojo.cgi.EventMessageModel;
 import me.djin.weixin.pojo.sns.Phone;
@@ -25,8 +28,11 @@ import me.djin.weixin.util.Constant;
  */
 public class WxRequestProcess {
 	/**
-	 * 解密微信第三方平台事件消息,如:验证票据/授权变更推送<br/>
-	 * 注意:接收到请求后需要返回字符串success
+	 * 解密微信第三方平台事件消息,如:验证票据/取消授权/授权更新/授权成功等时间推送
+	 * {@link https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/Before_Develop/third_party_platform_apply_material.html}
+	 * <br/>
+	 * 注意:接收到请求后需要返回字符串success<br/>
+	 * 
 	 * 
 	 * @param request 微信推送的请求
 	 * @return
@@ -44,13 +50,13 @@ public class WxRequestProcess {
 		String nonce = getNonce(request);
 		String timeStamp = getTimeStamp(request);
 		String postData = getPostData(request);
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
+		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
 				"signature:" + msgSignature);
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
+		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
 				"nonce:" + nonce);
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
+		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
 				"timeStamp:" + timeStamp);
-		Constant.LOGGER.info(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
+		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptEventRequest",
 				"postData:" + postData);
 
 		WXBizMsgCrypt wxCrypt = new WXBizMsgCrypt(componentInfo.getToken(), componentInfo.getEncodingAESKey(),

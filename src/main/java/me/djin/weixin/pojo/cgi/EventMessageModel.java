@@ -26,7 +26,7 @@ public class EventMessageModel {
 	 */
 	private String appId;
 	/**
-	 * 时间戳，单位：s
+	 * 时间戳，单位：秒
 	 */
 	private Date createTime;
 	/**

@@ -33,7 +33,7 @@ import me.djin.weixin.pojo.cgi.EventMessageModel.EventType;
  *
  * 提供提取消息格式中的密文及生成回复消息格式的接口.
  */
-class XMLParse {
+public class XMLParse {
 	/**
 	 * 解析事件消息,包括但不限于验证票据事件/授权变更事件
 	 * 
