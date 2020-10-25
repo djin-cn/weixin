@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.rmi.UnexpectedException;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,6 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -26,7 +28,7 @@ import org.xml.sax.SAXException;
 import me.djin.weixin.pojo.cgi.AuthorizeInfo;
 import me.djin.weixin.pojo.cgi.ComponentTicket;
 import me.djin.weixin.pojo.cgi.EventMessageModel;
-import me.djin.weixin.pojo.cgi.EventMessageModel.EventType;
+import me.djin.weixin.pojo.common.EventType;
 
 /**
  * XMLParse class
@@ -34,6 +36,9 @@ import me.djin.weixin.pojo.cgi.EventMessageModel.EventType;
  * 提供提取消息格式中的密文及生成回复消息格式的接口.
  */
 public class XMLParse {
+	public static final String KEY_ENCRYPT = "Encrypt";
+	public static final String KEY_TOUSERNAME = "ToUserName";
+
 	/**
 	 * 解析事件消息,包括但不限于验证票据事件/授权变更事件
 	 * 
@@ -53,6 +58,11 @@ public class XMLParse {
 		NodeList appIdNodeList = root.getElementsByTagName(EventMessageModel.APPID_NODE);
 		NodeList createTimeNodelist = root.getElementsByTagName(EventMessageModel.CREATETIME_NODE);
 		NodeList infoTypeNodelist = root.getElementsByTagName(EventMessageModel.INFOTYPE_NODE);
+
+		Node infoTypeNode = infoTypeNodelist.item(0);
+		if (infoTypeNode == null) {
+			throw new UnexpectedException(String.format("未能正确获取到%1$s节点, 此消息类型尚未实现", EventMessageModel.INFOTYPE_NODE));
+		}
 		String infoType = infoTypeNodelist.item(0).getTextContent();
 
 		// 验证票据事件消息
@@ -67,7 +77,7 @@ public class XMLParse {
 			return componentTicket;
 		}
 
-		// 授权变更事件消息
+		// 取消授权/更新授权/授权成功的事件消息
 		NodeList authorizerAppIdNodeList = root.getElementsByTagName(AuthorizeInfo.AUTHORIZERAPPID_NODE);
 		NodeList authorizationCodeNodelist = root.getElementsByTagName(AuthorizeInfo.AUTHORIZATIONCODE_NODE);
 		NodeList authorizationCodeExpiredTimeNodelist = root
@@ -96,11 +106,13 @@ public class XMLParse {
 
 	/**
 	 * 提取出xml数据包中的加密消息, 一般用于接收微信安全模式推送的XML消息, 包含两个元素:Encrypt,ToUserName;
-	 * 
+	 *
+	 * @see XMLParse#extract2Map(String)
 	 * @param xmltext 待提取的xml字符串
 	 * @return 提取出的加密消息字符串
 	 * @throws AesException
 	 */
+	@Deprecated
 	public static Object[] extract(String xmltext) throws AesException {
 		Object[] result = new Object[3];
 		try {
@@ -116,6 +128,38 @@ public class XMLParse {
 			result[1] = nodelist1.item(0).getTextContent();
 			result[2] = nodelist2.item(0).getTextContent();
 			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AesException(AesException.ParseXmlError);
+		}
+	}
+
+	/**
+	 * 提取微信发送的xml文本消息
+	 * 
+	 * @param xmltext
+	 * @return
+	 * @throws AesException
+	 */
+	public static HashMap<String, String> extract2Map(String xmltext) throws AesException {
+		HashMap<String, String> map = new HashMap<String, String>();
+		try {
+			DocumentBuilder db = buildDocumentBuilder();
+			StringReader sr = new StringReader(xmltext);
+			InputSource is = new InputSource(sr);
+			Document document = db.parse(is);
+
+			Element root = document.getDocumentElement();
+			NodeList list = root.getChildNodes();
+			int length = list.getLength();
+			String key, value;
+			for (int i = 0; i < length; i++) {
+				Node node = list.item(i);
+				key = node.getNodeName();
+				value = node.getTextContent();
+				map.put(key, value);
+			}
+			return map;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AesException(AesException.ParseXmlError);

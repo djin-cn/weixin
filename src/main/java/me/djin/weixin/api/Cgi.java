@@ -22,6 +22,7 @@ import me.djin.weixin.pojo.cgi.ComponentAuthorizerToken;
 import me.djin.weixin.pojo.cgi.ComponentPreAuthCode;
 import me.djin.weixin.pojo.cgi.ComponentToken;
 import me.djin.weixin.pojo.cgi.Page;
+import me.djin.weixin.pojo.cgi.UniformMessageSendDto;
 
 /**
  * 微信网关类接口
@@ -165,4 +166,18 @@ public interface Cgi {
 	@RequestLine("POST /cgi-bin/component/api_get_authorizer_list?component_access_token={component_access_token}")
 	Page<AuthorizerSimpleInfo> apiGetAuthorizerList(@Param("component_access_token") String componentAccessToken,
 			ApiGetAuthorizerListDto dto);
+
+	/**
+	 * 下发小程序或者公众号统一服务消息, 适用于小程序或者公众号都可以
+	 * 
+	 * {@link https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/Mini_Programs/uniform_message/uniformMessage.send.html}
+	 * 
+	 * @param authorizerAccessToken 第三方平台接口调用令牌,
+	 *                              具体获取方式可以通过{@link Cgi#apiAuthorizerToken(String, ApiAuthorizerTokenDto)}获取
+	 * @param dto
+	 * @return
+	 */
+	@RequestLine("POST https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={authorizer_access_token}")
+	BaseModel uniformMessageSend(@Param("authorizer_access_token") String authorizerAccessToken,
+			UniformMessageSendDto dto);
 }

@@ -15,6 +15,7 @@ package me.djin.weixin.encrypt;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 
 import javax.crypto.Cipher;
@@ -245,10 +246,11 @@ public class WXBizMsgCrypt {
 
 		// 密钥，公众账号的app secret
 		// 提取密文
-		Object[] encrypt = XMLParse.extract(postData);
+		HashMap<String, String> map = XMLParse.extract2Map(postData);
+//		Object[] encrypt = XMLParse.extract(postData);
 
 		// 验证安全签名
-		String signature = SHA1.getSHA1(token, timeStamp, nonce, encrypt[1].toString());
+		String signature = SHA1.getSHA1(token, timeStamp, nonce, map.get(XMLParse.KEY_ENCRYPT));
 
 		// 和URL中的签名比较是否相等
 		// System.out.println("第三方收到URL中的签名：" + msg_sign);
@@ -258,7 +260,7 @@ public class WXBizMsgCrypt {
 		}
 
 		// 解密
-		String result = decrypt(encrypt[1].toString());
+		String result = decrypt(map.get(XMLParse.KEY_ENCRYPT));
 		return result;
 	}
 
