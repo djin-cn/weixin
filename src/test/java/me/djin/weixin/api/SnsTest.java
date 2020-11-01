@@ -15,8 +15,12 @@ public class SnsTest {
 
 	@Test
 	public void testGetUserAccessToken() throws Exception {
-		AccessToken response = svcBaseSns.accessToken(Constant.APPID, Constant.APPSECRET,
-				"081NZwU12sjUMU0wQTW12DleU12NZwUY");
+		String code = null;
+		if (code == null) {
+			logger.info("没有设置code, 跳过测试!!!");
+			return;
+		}
+		AccessToken response = svcBaseSns.accessToken(Constant.APPID, Constant.APPSECRET, code);
 		assertNotNull(response);
 		assertNotNull(response.getErrcode());
 		if (0 != response.getErrcode()) {
