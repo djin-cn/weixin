@@ -28,7 +28,7 @@ import me.djin.weixin.util.Constant;
  */
 public class WxRequestProcess {
 	/**
-	 * 解密微信第三方平台事件消息,如:验证票据/取消授权/授权更新/授权成功等时间推送
+	 * 解密微信第三方平台事件消息,如:验证票据/取消授权/授权更新/授权成功等时间推送, 仅限时间消息, 目前只支持以上4总类型的事件消息
 	 * {@link https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/Before_Develop/third_party_platform_apply_material.html}
 	 * <br/>
 	 * 注意:接收到请求后需要返回字符串success<br/>
@@ -79,7 +79,8 @@ public class WxRequestProcess {
 	 * @param encryptData 加密的手机号信息
 	 * @param iv          加密算法的初始向量,
 	 *                    详细将{@link https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/signature.html#%E5%8A%A0%E5%AF%86%E6%95%B0%E6%8D%AE%E8%A7%A3%E5%AF%86%E7%AE%97%E6%B3%95}
-	 * @param cloudId     敏感数据对应的云 ID，开通云开发的小程序才会返回，可通过云调用直接获取开放数据,
+	 * @param cloudId     目前只能支持NULL或者空字符串;<br/>
+	 *                    敏感数据对应的云 ID，开通云开发的小程序才会返回，可通过云调用直接获取开放数据,
 	 *                    详细见{@link https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/signature.html#method-cloud}
 	 * @return
 	 * @throws AesException
@@ -87,7 +88,7 @@ public class WxRequestProcess {
 	public static Phone decryptPhone(String sessionKey, String encryptData, String iv, String cloudId)
 			throws AesException {
 		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptPhone", "微信手机号码解析ing...:");
-		if (cloudId != null) {
+		if (cloudId != null && cloudId != "") {
 			throw new UnsupportedOperationException("尚未实现通过微信开放平台云ID获取手机号");
 		}
 		Constant.LOGGER.debug(Constant.LOG_FORMAT, WxRequestProcess.class.getName(), "decryptPhone",
